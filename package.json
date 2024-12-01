@@ -1,0 +1,21 @@
+{
+  "name": "adventofcode",
+  "version": "1.0.0",
+  "description": "AdventOfCode in TypeScript",
+  "main": "",
+  "scripts": {
+    "test": "glob -c \"tsx --env-file .env --env-file .env.test --test --test-reporter spec \" \"./**/*.test.ts\""
+  },
+  "keywords": [
+    "AdventOfCode",
+    "TypeScript"
+  ],
+  "author": "h.minghe@gmail.com",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "glob": "^11.0.0",
+    "prettier": "^3.4.1",
+    "tsx": "^4.19.2"
+  }
+}

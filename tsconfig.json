@@ -1,0 +1,7 @@
+{
+	"compilerOptions": {
+		"outDir": "./dist",
+		"types": ["node"]
+	},
+	"include": ["./2024/**/*"]
+}
