@@ -8,8 +8,20 @@ enum DIRECTION {
 interface Point {
   i: number;
   j: number;
-  direction: DIRECTION;
+  direction?: DIRECTION;
 }
+
+const toSignature = (p: Point, directionInclude: boolean = false) => {
+  return directionInclude ? `${p.i},${p.j},${p.direction}` : `${p.i},${p.j}`;
+};
+const toPoint = (s: string) => {
+  const [i, j, direction] = s.split(',');
+  return {
+    i: parseInt(i, 10),
+    j: parseInt(j, 10),
+    direction,
+  };
+};
 
 const move = (point: Point): Point => {
   switch (point.direction as DIRECTION) {
@@ -107,18 +119,16 @@ const getStart = (map: string[][]): Point => {
   throw new Error('no start point');
 };
 
-export const getDistinctPositions = (s: string): number => {
+export const getDistinctPositions = (s: string): Set<string> => {
   const map: string[][] = s.split('\n').map(l => l.split(''));
   const N = map.length;
   const M = map[0].length;
 
-  const points = {};
+  const points: Set<string> = new Set();
   let cur = getStart(map);
   let steps = 0;
   while (!isOut(cur, N, M)) {
-    if (!points[`${cur.i}${cur.j}`]) {
-      points[`${cur.i},${cur.j}`] = true;
-    }
+    points.add(toSignature(cur));
 
     const next = move(cur);
     if (isOut(next, N, M)) {
@@ -132,40 +142,26 @@ export const getDistinctPositions = (s: string): number => {
     }
     steps++;
   }
-  return Object.keys(points).length;
+  return points;
 };
 
-export const isValidPlace = (
-  i: number,
-  j: number,
-  map: string[][],
-): boolean => {
+const hasLoop = (map: string[][]): boolean => {
   const N = map.length;
   const M = map[0].length;
-
-  const points = {};
+  const visited = new Set();
   let cur = getStart(map);
-  let meetTimes = 0;
-  let meetDirect = undefined;
   while (!isOut(cur, N, M)) {
-    if (!points[`${cur.i}${cur.j}`]) {
-      points[`${cur.i},${cur.j}`] = true;
+    const sig = toSignature(cur, true);
+    if (visited.has(sig)) {
+      return true;
+    } else {
+      visited.add(sig);
     }
-
     const next = move(cur);
     if (isOut(next, N, M)) {
       cur = next;
-      return false;
     } else {
-      if (next.i === i && next.j === j) {
-        if (meetTimes > 1 && meetDirect === cur.direction) {
-          console.warn('valid: ', i, j);
-          return true;
-        }
-        meetTimes += 1;
-        meetDirect = cur.direction;
-        cur = turnRight(cur);
-      } else if (map[next.i][next.j] === '#') {
+      if (map[next.i][next.j] === '#') {
         cur = turnRight(cur);
       } else {
         cur = next;
@@ -175,27 +171,22 @@ export const isValidPlace = (
   return false;
 };
 
-export const getValidPositions = (s: string): number => {
+export const getValidPositions = (s: string): Point[] => {
   const map: string[][] = s.split('\n').map(l => l.split(''));
-  const N = map.length;
-  const M = map[0].length;
 
-  let cur = getStart(map);
+  const points = getDistinctPositions(s);
 
-  let valids = 0;
-  for (let i = 0; i < N; i++) {
-    for (let j = 0; j < M; j++) {
-      // skip the the guard position
-      if (i === cur.i && j === cur.j) {
-        continue;
-      } else if (map[i][j] === '#') {
-        continue;
-      } else {
-        if (isValidPlace(i, j, map)) {
-          valids += 1;
-        }
+  const validPoints = [];
+  points.forEach(p => {
+    const point = toPoint(p);
+    if (map[point.i][point.j] === '.') {
+      map[point.i][point.j] = '#';
+      if (hasLoop(map)) {
+        validPoints.push(point);
       }
+      map[point.i][point.j] = '.';
     }
-  }
-  return valids;
+  });
+
+  return validPoints;
 };

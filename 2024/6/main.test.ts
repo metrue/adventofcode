@@ -17,13 +17,13 @@ describe('Day 6', () => {
 ........#.
 #.........
 ......#...`;
-      const num = getDistinctPositions(s);
-      assert.strictEqual(num, 41);
+      const points = getDistinctPositions(s);
+      assert.strictEqual(points.size, 41);
     });
 
     it('integration', () => {
-      const num = getDistinctPositions(process.env.DAY_6_INPUT);
-      assert.strictEqual(num, 5199);
+      const points = getDistinctPositions(process.env.DAY_6_INPUT);
+      assert.strictEqual(points.size, 5199);
     });
   });
 
@@ -40,13 +40,13 @@ describe('Day 6', () => {
 ........#.
 #.........
 ......#...`;
-      const num = getValidPositions(s);
-      assert.strictEqual(num, 6);
+      const points = getValidPositions(s);
+      assert.strictEqual(points.length, 6);
     });
 
     it('integration', () => {
-      // const num = getValidPositions(process.env.DAY_6_INPUT);
-      // assert.strictEqual(num, 5199);
+      const points = getValidPositions(process.env.DAY_6_INPUT);
+      assert.strictEqual(points.length, 1915);
     });
   });
 });
