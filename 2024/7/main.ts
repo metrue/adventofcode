@@ -25,9 +25,7 @@ export const getCalibrationResult = (s: string, operators: Operation[]) => {
 
   let sum = 0;
   for (const c of calibrations) {
-    const resultSet = dp(c.digits, operators);
-    //    console.warn(c.digits, resultSet);
-    if (resultSet.indexOf(c.result) !== -1) {
+    if (backtrace(c.digits, c.result, operators)) {
       sum += c.result;
     }
   }
@@ -59,4 +57,55 @@ const dp = (list: number[], operators: Operation[]): number[] => {
     }
   }
   return results;
+};
+
+const backtrace = (
+  digits: number[],
+  result: number,
+  operators: Operation[],
+): boolean => {
+  if (digits.length === 0) {
+    return false;
+  }
+  if (digits.length === 1) {
+    return digits[0] === result;
+  }
+
+  const last = digits[digits.length - 1];
+  for (const op of operators) {
+    if (Operation.add === op) {
+      if (
+        backtrace(digits.slice(0, digits.length - 1), result - last, operators)
+      ) {
+        return true;
+      }
+    } else if (Operation.mul === op) {
+      if (
+        backtrace(digits.slice(0, digits.length - 1), result / last, operators)
+      ) {
+        return true;
+      }
+    } else if (Operation.concatenation === op) {
+      const resultNumber = result.toString().split('');
+      const lastNumber = last.toString().split('');
+      while (lastNumber.length > 0) {
+        if (lastNumber.pop() !== resultNumber.pop()) {
+          break;
+        }
+      }
+      if (lastNumber.length > 0) {
+        continue;
+      } else {
+        if (
+          backtrace(
+            digits.slice(0, digits.length - 1),
+            parseInt(resultNumber.join(''), 10),
+            operators,
+          )
+        ) {
+          return true;
+        }
+      }
+    }
+  }
 };
