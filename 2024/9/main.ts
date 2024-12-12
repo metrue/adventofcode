@@ -38,7 +38,6 @@ export const checksum = (s: string): number => {
 
   const decoded = decodeDiskMap(lst);
   const rearranged = freeDisk(decoded);
-  // console.warn(rearranged);
   return rearranged.reduce((acc, cur, index) => {
     if (cur >= 0) {
       return acc + parseInt(cur, 10) * index;
@@ -70,43 +69,13 @@ const findFree = (pointers: any[], len: number): number[] => {
 };
 
 const move = (files: number[], frees: number[], pointers: any[]) => {
-  if (files[1] - files[0] >= frees[1] - frees[0]) {
+  if (files[0] - files[1] > frees[1] - frees[0]) {
     return;
   }
 
   for (let i = 0; i <= files[1] - files[0]; i++) {
-    console.warn('-->', i);
     pointers[frees[0] + i] = pointers[files[0] + i];
     pointers[files[0] + i] = '.';
-  }
-};
-
-const moveFile = (fileStart: number, fileEnd: number, pointers: any[]) => {
-  let start = 0;
-  let end = 0;
-  while (end <= fileEnd) {
-    if (pointers[start] !== '.') {
-      start++;
-      end++;
-    } else {
-      if (pointers[start] === '.' && pointers[end] === '.') {
-        end++;
-      }
-      if (pointers[end] !== '.') {
-        if (end - start >= fileStart - fileEnd && end <= fileEnd) {
-          // console.warn('move', [start, end], [fileEnd, fileStart], pointers);
-          for (let i = 0; i < fileStart - fileEnd; i++) {
-            console.warn(i, start + i);
-            pointers[start + i] = pointers[fileStart - i];
-            pointers[fileStart - i] = '.';
-          }
-          // console.warn('after move', pointers);
-          break;
-        } else {
-          start = end;
-        }
-      }
-    }
   }
 };
 
@@ -124,20 +93,14 @@ export const freeDisk2 = (pointers: any[]) => {
       if (pointers[fileEnd] === pointers[fileStart]) {
         fileEnd--;
       } else {
-        console.warn('found files', [fileStart, fileEnd + 1]);
         const frees = findFree(pointers, fileStart - fileEnd);
-        console.warn('found frees', frees);
         if (
           !moved[pointers[fileStart]] &&
           frees.length > 0 &&
           frees[1] < fileEnd + 1
         ) {
-          console.warn('before ->', pointers);
           move([fileEnd + 1, fileStart], frees, pointers);
           moved[pointers[fileStart]] = true;
-          console.warn('after ->', pointers);
-        } else {
-          console.warn('skip', pointers[fileStart]);
         }
         fileStart = fileEnd;
       }
@@ -151,7 +114,6 @@ export const checksum2 = (s: string): number => {
 
   const decoded = decodeDiskMap(lst);
   const rearranged = freeDisk2(decoded);
-  console.warn(rearranged);
   return rearranged.reduce((acc, cur, index) => {
     if (cur >= 0) {
       return acc + parseInt(cur, 10) * index;
