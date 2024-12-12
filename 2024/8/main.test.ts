@@ -11,7 +11,7 @@ const measure = (fn: () => void) => {
   console.log(`timeout: ${executionTime}`);
 };
 
-describe('Day 7', () => {
+describe('Day 8', () => {
   describe('Unit', () => {
     it('getAntiNodes', () => {
       const p1 = {
