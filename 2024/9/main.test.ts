@@ -11,7 +11,7 @@ import process = require('process');
 
 const measure = (fn: () => void) => {
   const start = process.hrtime();
-  const result = fn();
+  fn();
   const stop = process.hrtime(start);
   const executionTime = (stop[0] * 1e9 + stop[1]) / 1e9;
   console.log(`timeout: ${executionTime}`);
@@ -37,7 +37,6 @@ describe('Day 9', () => {
     it('decodeDiskMap 3', () => {
       const s = '233313312141413140203';
       const res = decodeDiskMap(s.split('').map(d => parseInt(d, 10)));
-      console.warn(res);
       assert.strictEqual(
         res.join(''),
         '00...111...2...333.44.5555.6666.777.888899101010',
