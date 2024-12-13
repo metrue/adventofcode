@@ -133,7 +133,7 @@ describe('Day 10', () => {
     it('integration', () => {
       measure(() => {
         const res = sumRating(process.env.DAY_10_INPUT);
-        assert.strictEqual(res, 6154342787400);
+        assert.strictEqual(res, 1289);
       });
     });
   });
