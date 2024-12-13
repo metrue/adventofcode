@@ -5,7 +5,7 @@ import process = require('process');
 
 const measure = (fn: () => void) => {
   const start = process.hrtime();
-  const result = fn();
+  fn();
   const stop = process.hrtime(start);
   const executionTime = (stop[0] * 1e9 + stop[1]) / 1e9;
   console.log(`timeout: ${executionTime}`);
