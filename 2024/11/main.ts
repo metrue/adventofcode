@@ -1,28 +1,43 @@
-export const blink = (stones: string[]): string[] => {
-  const lst: string[] = [];
-  for (let i = 0; i < stones.length; i++) {
-    if (stones[i] === '0') {
-      lst.push('1');
-    } else if (stones[i].length % 2 === 0) {
-      console.warn('+++');
-      console.warn(stones[i]);
-      console.warn('+++');
-      const len = stones[i].length;
-      lst.push(stones[i].substring(0, len / 2));
-      const right = stones[i].substring(len / 2).replace(/^0+/, '');
-      const rigthValue = right === '' ? '0' : right;
-      lst.push(rigthValue);
-    } else {
-      lst.push(`${parseInt(stones[i], 10) * 2024}`);
-    }
+const blink = (num: string): string[] => {
+  if (num === '0') {
+    return ['1'];
+  } else if (num.length % 2 === 0) {
+    const left = num.substring(0, num.length / 2);
+    const right = parseInt(num.substring(num.length / 2), 10);
+    return [left, `${right}`];
+  } else {
+    return [`${parseInt(num, 10) * 2024}`];
   }
-  return lst;
 };
 
-export const blinks = (s: string, times: number): string[] => {
-  let cur: string[] = s.split(' ');
-  for (let i = 0; i < times; i++) {
-    cur = blink(cur);
+export const dp = (
+  stone: string,
+  times: number,
+  mem: Map<string, number>,
+): number => {
+  if (mem.has(`${stone}:${times}`)) {
+    return mem.get(`${stone}:${times}`);
   }
-  return cur;
+
+  if (times === 0) {
+    return 1;
+  }
+
+  const blinked = blink(`${stone}`);
+  let sum = 0;
+  for (const b of blinked) {
+    sum += dp(b, times - 1, mem);
+  }
+  mem.set(`${stone}:${times}`, sum);
+  return sum;
+};
+
+export const solve = (s: string, times: number): number => {
+  const stones = s.split(' ');
+  let sum = 0;
+  const mem = new Map<string, number>();
+  for (const s of stones) {
+    sum += dp(s, times, mem);
+  }
+  return sum;
 };
